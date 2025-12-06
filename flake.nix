@@ -14,7 +14,13 @@
   };
 
   outputs =
-    { self, nixpkgs, treefmt-nix, pre-commit-hooks, ... }:
+    {
+      self,
+      nixpkgs,
+      treefmt-nix,
+      pre-commit-hooks,
+      ...
+    }:
     let
       # Supported systems
       systems = [
@@ -25,7 +31,7 @@
       ];
 
       # Helper to generate outputs for each system
-      forAllSystems = f: nixpkgs.lib.genAttrs systems (system: f system);
+      forAllSystems = nixpkgs.lib.genAttrs systems;
 
       # Get pkgs for a system
       pkgsFor = system: nixpkgs.legacyPackages.${system};
@@ -37,7 +43,7 @@
       mkPreCommitHooks =
         system: src:
         {
-          statixExcludes ? [ ],
+          statixIgnore ? [ ],
         }:
         pre-commit-hooks.lib.${system}.run {
           inherit src;
@@ -48,7 +54,7 @@
             };
             statix = {
               enable = true;
-              excludes = statixExcludes;
+              settings.ignore = statixIgnore;
             };
           };
         };
@@ -63,21 +69,20 @@
             src ? ./.,
             extraPackages ? [ ],
             shellHook ? "",
-            statixExcludes ? [ ],
+            statixIgnore ? [ ],
           }:
           let
             pkgs = pkgsFor system;
             treefmtEval = treefmtFor system;
-            pre-commit-check = mkPreCommitHooks system src { inherit statixExcludes; };
+            pre-commit-check = mkPreCommitHooks system src { inherit statixIgnore; };
           in
           pkgs.mkShell {
-            packages =
-              [
-                treefmtEval.config.build.wrapper
-                pkgs.statix
-                pkgs.nixd
-              ]
-              ++ extraPackages;
+            packages = [
+              treefmtEval.config.build.wrapper
+              pkgs.statix
+              pkgs.nixd
+            ]
+            ++ extraPackages;
 
             shellHook = ''
               ${pre-commit-check.shellHook}

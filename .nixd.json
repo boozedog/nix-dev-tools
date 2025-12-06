@@ -1,13 +1,18 @@
 {
   "formatting": {
-    "command": ["nixfmt"]
+    "command": [
+      "treefmt",
+      "--stdin"
+    ]
   },
   "diagnostic": {
-    "suppress": [-32001]
+    "suppress": [
+      -32001
+    ]
   },
   "options": {
     "nixpkgs": {
-      "expr": "import (builtins.getFlake (toString ./.)).inputs.nixpkgs { }"
+      "expr": "(builtins.getFlake (toString ./.)).inputs.nixpkgs"
     }
   }
 }

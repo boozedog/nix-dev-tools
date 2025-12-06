@@ -26,3 +26,5 @@ result-*
 .env
 .env.local
 .env.*.local
+
+.pre-commit-config.yaml
