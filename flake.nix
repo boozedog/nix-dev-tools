@@ -34,7 +34,11 @@
       treefmtFor = system: treefmt-nix.lib.evalModule (pkgsFor system) ./treefmt.nix;
 
       # Pre-commit hooks for a system (requires src path from consumer)
-      mkPreCommitHooks = system: src:
+      mkPreCommitHooks =
+        system: src:
+        {
+          statixExcludes ? [ ],
+        }:
         pre-commit-hooks.lib.${system}.run {
           inherit src;
           hooks = {
@@ -42,7 +46,10 @@
               enable = true;
               package = (treefmtFor system).config.build.wrapper;
             };
-            statix.enable = true;
+            statix = {
+              enable = true;
+              excludes = statixExcludes;
+            };
           };
         };
     in
@@ -56,18 +63,18 @@
             src ? ./.,
             extraPackages ? [ ],
             shellHook ? "",
+            statixExcludes ? [ ],
           }:
           let
             pkgs = pkgsFor system;
             treefmtEval = treefmtFor system;
-            pre-commit-check = mkPreCommitHooks system src;
+            pre-commit-check = mkPreCommitHooks system src { inherit statixExcludes; };
           in
           pkgs.mkShell {
             packages =
               [
                 treefmtEval.config.build.wrapper
                 pkgs.statix
-                pkgs.nil
                 pkgs.nixd
               ]
               ++ extraPackages;
@@ -75,7 +82,7 @@
             shellHook = ''
               ${pre-commit-check.shellHook}
               echo "Nix development environment loaded"
-              echo "Available tools: treefmt, statix, nil, nixd"
+              echo "Available tools: treefmt, statix, nixd"
               ${shellHook}
             '';
           };
@@ -104,7 +111,7 @@
       # Checks for this repo
       checks = forAllSystems (system: {
         formatting = self.lib.mkFormattingCheck system self;
-        pre-commit = self.lib.mkPreCommitHooks system ./.;
+        pre-commit = self.lib.mkPreCommitHooks system ./. { };
       });
     };
 }
