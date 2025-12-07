@@ -42,19 +42,12 @@
       # Pre-commit hooks for a system (requires src path from consumer)
       mkPreCommitHooks =
         system: src:
-        {
-          statixIgnore ? [ ],
-        }:
         pre-commit-hooks.lib.${system}.run {
           inherit src;
           hooks = {
             treefmt = {
               enable = true;
               package = (treefmtFor system).config.build.wrapper;
-            };
-            statix = {
-              enable = true;
-              settings.ignore = statixIgnore;
             };
           };
         };
@@ -69,12 +62,11 @@
             src ? ./.,
             extraPackages ? [ ],
             shellHook ? "",
-            statixIgnore ? [ ],
           }:
           let
             pkgs = pkgsFor system;
             treefmtEval = treefmtFor system;
-            pre-commit-check = mkPreCommitHooks system src { inherit statixIgnore; };
+            pre-commit-check = mkPreCommitHooks system src;
           in
           pkgs.mkShell {
             packages = [
@@ -86,8 +78,6 @@
 
             shellHook = ''
               ${pre-commit-check.shellHook}
-              echo "Nix development environment loaded"
-              echo "Available tools: treefmt, statix, nixd"
               ${shellHook}
             '';
           };
@@ -116,7 +106,7 @@
       # Checks for this repo
       checks = forAllSystems (system: {
         formatting = self.lib.mkFormattingCheck system self;
-        pre-commit = self.lib.mkPreCommitHooks system ./. { };
+        pre-commit = self.lib.mkPreCommitHooks system ./.;
       });
     };
 }
