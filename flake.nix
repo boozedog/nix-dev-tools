@@ -73,6 +73,7 @@
               treefmtEval.config.build.wrapper
               pkgs.statix
               pkgs.nixd
+              pkgs.deadnix
             ]
             ++ extraPackages;
 
