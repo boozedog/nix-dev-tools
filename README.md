@@ -4,10 +4,12 @@ Shared Nix development environment with formatters, linters, LSP servers, and pr
 
 ## What's Included
 
-- **treefmt** with nixfmt - automatic Nix formatting
+- **nixfmt-rfc-style** - automatic Nix formatting
 - **statix** - Nix linter and static analysis
+- **deadnix** - find unused code in Nix files
+- **nil** - Nix LSP with semantic diagnostics (catches duplicate attrs, undefined vars)
 - **nixd** - Nix LSP server with flake-aware option completions
-- **pre-commit hooks** - treefmt and statix run automatically on commit
+- **pre-commit hooks** - nixfmt, statix, deadnix, and nil run automatically on commit
 
 ## Integration
 
@@ -49,22 +51,13 @@ outputs = { self, nixpkgs, dev-tools, ... }:
 };
 ```
 
-### 3. (Optional) Add the formatter
-
-This enables `nix fmt` to format your project:
-
-```nix
-formatter.aarch64-darwin = dev-tools.lib.mkFormatter "aarch64-darwin";
-formatter.x86_64-linux = dev-tools.lib.mkFormatter "x86_64-linux";
-```
-
-### 4. Update your flake lock
+### 3. Update your flake lock
 
 ```bash
 nix flake update dev-tools
 ```
 
-### 5. Enter the dev shell
+### 4. Enter the dev shell
 
 ```bash
 nix develop
@@ -98,8 +91,6 @@ Here's a complete minimal flake using nix-dev-tools:
         inherit system;
         src = ./.;
       };
-
-      formatter.${system} = dev-tools.lib.mkFormatter system;
     };
 }
 ```
@@ -128,8 +119,6 @@ devShells.${system}.default = dev-tools.lib.mkDevShell {
 | Function | Description |
 |----------|-------------|
 | `lib.mkDevShell { system, src, extraPackages?, shellHook? }` | Creates a dev shell with all tools |
-| `lib.mkFormatter system` | Returns the treefmt wrapper for `nix fmt` |
-| `lib.mkFormattingCheck system src` | Returns a check for CI |
 | `lib.mkPreCommitHooks system src` | Returns pre-commit hook configuration |
 
 ## Supported Systems
