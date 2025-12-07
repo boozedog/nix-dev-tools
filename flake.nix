@@ -48,6 +48,7 @@
             treefmt = {
               enable = true;
               package = (treefmtFor system).config.build.wrapper;
+              settings.fail-on-change = true;
             };
           };
         };

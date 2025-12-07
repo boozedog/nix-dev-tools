@@ -15,9 +15,7 @@
       "nixd": {
         "formatting": {
           "command": [
-            "treefmt",
-            "--stdin",
-            "{file}"
+            "nixfmt"
           ]
         },
         "nixpkgs": {
