@@ -1,0 +1,68 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "statix",
+      "type": "shell",
+      "command": "statix",
+      "args": [
+        "check",
+        "--format=errfmt"
+      ],
+      "problemMatcher": {
+        "owner": "statix",
+        "fileLocation": [
+          "relative",
+          "${workspaceFolder}"
+        ],
+        "severity": "warning",
+        "pattern": {
+          "regexp": "^([^>]+)>(\\d+):(\\d+):([WE]):(\\d+):(.*)$",
+          "file": 1,
+          "line": 2,
+          "column": 3,
+          "code": 5,
+          "message": 6
+        }
+      },
+      "presentation": {
+        "reveal": "never"
+      },
+      "group": "none",
+      "runOptions": {
+        "runOn": "folderOpen"
+      }
+    },
+    {
+      "label": "deadnix",
+      "type": "shell",
+      "command": "deadnix",
+      "args": [
+        "--output-format=human-readable"
+      ],
+      "problemMatcher": {
+        "owner": "deadnix",
+        "fileLocation": [
+          "relative",
+          "${workspaceFolder}"
+        ],
+        "severity": "warning",
+        "pattern": {
+          "regexp": "^([^:]+):(\\d+):(\\d+)-(\\d+):(\\d+):\\s+(.*)$",
+          "file": 1,
+          "line": 2,
+          "column": 3,
+          "endColumn": 5,
+          "message": 6
+        }
+      },
+      "presentation": {
+        "reveal": "never"
+      },
+      "group": "none",
+      "runOptions": {
+        "runOn": "folderOpen"
+      }
+    }
+  ]
+}

@@ -22,6 +22,19 @@
           "expr": "import (builtins.getFlake \"github:NixOS/nixpkgs/nixpkgs-unstable\") {}"
         }
       }
+    },
+    "triggerTaskOnSave.tasks": {
+      "deadnix": [
+        "*.nix"
+      ],
+      "statix": [
+        "*.nix"
+      ]
     }
+  },
+  "extensions": {
+    "recommendations": [
+      "mkhl.direnv"
+    ]
   }
 }
